@@ -36,18 +36,21 @@ def get_filtered_vacancies_hh(
         yield vacancies_page_json
 
 
+def predict_salary(salary_from, salary_to):
+    if salary_from is None:
+        return int(salary_to * 0.8)
+    if salary_to is None:
+        return int(salary_from * 1.2)
+    else:
+        return int((salary_from + salary_to) / 2)
+
+
 def predict_rub_salary_hh(vacancy_hh):
     vacancy_salary = vacancy_hh["salary"]
     if vacancy_salary is None or vacancy_salary["currency"] != "RUR":
         return None
-    rub_salary_from = vacancy_salary["from"]
-    rub_salary_to = vacancy_salary["to"]
-    if rub_salary_from is None:
-        return int(rub_salary_to * 0.8)
-    if rub_salary_to is None:
-        return int(rub_salary_from * 1.2)
-    else:
-        return int((rub_salary_from + rub_salary_to) / 2)
+
+    return predict_salary(vacancy_salary["from"], vacancy_salary["to"])
 
 
 def predict_average_rub_salary(hh_vacancies_generator):
