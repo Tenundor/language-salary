@@ -60,24 +60,28 @@ def predict_rub_salary_sj(vacancy_sj):
     return predict_salary(vacancy_sj["payment_from"], vacancy_sj["payment_to"])
 
 
-def predict_average_rub_salary(hh_vacancies_generator):
+def predict_average_salary(vacancies_predicted_salary):
+    vacancies_quantity = len(vacancies_predicted_salary)
+    processed_vacancies_salary = list(filter(lambda salary: type(salary) is int, vacancies_predicted_salary))
+    processed_vacancies_quantity = len(processed_vacancies_salary)
+    average_salary = int(sum(processed_vacancies_salary) / processed_vacancies_quantity)
+    return {
+        "vacancies_found": vacancies_quantity,
+        "vacancies_processed": processed_vacancies_quantity,
+        "average_salary": average_salary,
+    }
+
+
+def predict_average_rub_salary_hh(hh_vacancies_generator):
     vacancies_predicted_rub_salary = []
     for hh_vacancies_page in hh_vacancies_generator:
         current_page_number = hh_vacancies_page["page"] + 1
         total_pages_number = hh_vacancies_page["pages"]
         print("{} from {} pages downloaded.".format(current_page_number, total_pages_number))
         vacancies_predicted_rub_salary += [
-        predict_rub_salary_hh(vacancy) for vacancy in hh_vacancies_page["items"]
-    ]
-    quantity_founded_vacancies = len(vacancies_predicted_rub_salary)
-    correct_vacancies_salary = list(filter(lambda salary: type(salary) is int, vacancies_predicted_rub_salary))
-    quantity_correct_vacancies_salary = len(correct_vacancies_salary)
-    average_language_salary = int(sum(correct_vacancies_salary) / quantity_correct_vacancies_salary)
-    return {
-        "vacancies_found": quantity_founded_vacancies,
-        "vacancies_processed": quantity_correct_vacancies_salary,
-        "average_salary": average_language_salary,
-    }
+            predict_rub_salary_hh(vacancy) for vacancy in hh_vacancies_page["items"]
+        ]
+    predict_average_salary(vacancies_predicted_rub_salary)
 
 
 def get_filtered_vacancies_superjob(
@@ -141,6 +145,3 @@ if __name__ == "__main__":
         vacancy_town = superjob_vacancy["town"]["title"]
         predicted_salary_sj = predict_rub_salary_sj(superjob_vacancy)
         print(vacancy_name, vacancy_town, predicted_salary_sj, sep=", ")
-
-
-
