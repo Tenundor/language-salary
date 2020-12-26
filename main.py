@@ -74,6 +74,8 @@ def predict_average_rub_salary(hh_vacancies_generator):
 
 def get_filtered_vacancies_superjob(
         authorization_key,
+        town_superjob_id,
+        catalogues_superjob,
 
 ):
     superjob_api_url = "https://api.superjob.ru/2.0/vacancies"
@@ -81,7 +83,8 @@ def get_filtered_vacancies_superjob(
         "X-Api-App-ID": authorization_key
     }
     superjob_response_parameters = {
-
+        "town": town_superjob_id,
+        "catalogues": catalogues_superjob,
     }
     superjob_request = requests.get(
         superjob_api_url,
@@ -119,10 +122,15 @@ if __name__ == "__main__":
     # pprint(average_rub_salary_by_languages)
     moscow_superjob_id = 4
     superjob_programming_category_key = 48
-    superjob_vacancies = get_filtered_vacancies_superjob(superjob_api_key)["objects"]
-    superjob_vacancies_names = [vacancy["profession"] for vacancy in superjob_vacancies]
-    pprint(superjob_vacancies_names)
-
+    superjob_vacancies = get_filtered_vacancies_superjob(
+        superjob_api_key,
+        town_superjob_id=moscow_superjob_id,
+        catalogues_superjob=superjob_programming_category_key
+    )["objects"]
+    for superjob_vacancy in superjob_vacancies:
+        vacancy_name = superjob_vacancy["profession"]
+        vacancy_town = superjob_vacancy["town"]["title"]
+        print(vacancy_name, vacancy_town, sep=", ")
 
 
 
