@@ -111,7 +111,7 @@ def predict_average_rub_salary_sj(sj_vacancies_generator):
     vacancies_predicted_rub_salary = []
     for sj_vacancies_page in sj_vacancies_generator:
         vacancies_predicted_rub_salary += [
-            predict_rub_salary_sj(vacancy) for vacancy in sj_vacancies_page["objects"]
+            predict_rub_salary_sj(vacancy) for vacancy in sj_vacancies_page
         ]
     predict_average_salary(vacancies_predicted_rub_salary)
 
