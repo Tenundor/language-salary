@@ -6,7 +6,7 @@ import requests
 from pprint import pprint
 
 
-def get_filtered_vacancies_hh(user_agent_name, filtering_options={}):
+def get_filtered_vacancies_hh(user_agent_name, filtering_options={}):  # TODO: Добавь Try Except
     hh_api_url = "https://api.hh.ru/vacancies"
     vacancies_request_parameters = dict({
         "specialization": "",
@@ -75,7 +75,7 @@ def predict_salary(salary_from, salary_to):
 
 def predict_rub_salary_hh(vacancy_hh):
     vacancy_salary = vacancy_hh["salary"]
-    if vacancy_salary["currency"] != "RUR":
+    if not vacancy_salary or vacancy_salary["currency"] != "RUR":
         return None
     return predict_salary(vacancy_salary["from"], vacancy_salary["to"])
 
@@ -120,39 +120,33 @@ if __name__ == "__main__":
     load_dotenv()
     superjob_api_key = os.getenv("SUPERJOB_API_KEY")
     programming_languages = [
-        "TypeScript", "Swift", "Scala", "Objective-C", "Shell", "JavaScript",
-        "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
+        "TypeScript", "Swift", ##"Scala", "Objective-C", "Shell", "JavaScript",
+        # "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
     ]
-    #
-    # programming_specialisation_id = "1.221"
-    # Moscow_id = "1"
-    # search_period_days = "30"
-    # user_agent_name = "Api-test-agent"
-    # average_rub_salary_by_languages = {}
+    average_rub_salary_by_languages_hh = {}
     average_rub_salary_by_languages_sj = {}
-    moscow_superjob_id = 4
-    superjob_programming_category_key = 48
     for programming_language in programming_languages:
         print("Язык программирования:", programming_language)
-    #     language_vacancies_hh = get_filtered_vacancies_hh(
-    #         user_agent_name=user_agent_name,
-    #         specialization_id=programming_specialisation_id,
-    #         area=Moscow_id,
-    #         period=search_period_days,
-    #         search_text=programming_language,
-    #     )
-    #     average_rub_salary_by_languages_hh[programming_language] = predict_average_rub_salary_hh(
-        #     language_vacancies_hh)
-    # pprint(average_rub_salary_by_languages)
+        language_vacancies_hh = get_filtered_vacancies_hh(
+            user_agent_name="Api-test-agent",
+            filtering_options={
+                "specialization": "1.221",     # Programming specialization id
+                "area": 1,                     # Moscow id
+                "period": 30,                  # days
+                "text": programming_language,  # text to search in vacancies
+            },
+        )
+        average_rub_salary_by_language_hh = predict_average_rub_salary_hh(language_vacancies_hh)
+        average_rub_salary_by_languages_hh[programming_language] = average_rub_salary_by_language_hh
         language_vacancies_superjob = get_filtered_vacancies_superjob(
             superjob_api_key,
             filtering_options={
-                "town": moscow_superjob_id,
-                "catalogues": superjob_programming_category_key,
+                "town": 4,                     # Moscow id
+                "catalogues": 48,              # Programming category id
                 "keyword": programming_language,
             },
         )
-        average_rub_salary_by_languages_sj[programming_language] = predict_average_rub_salary_sj(
-            language_vacancies_superjob
-        )
+        average_rub_salary_by_language_sj = predict_average_rub_salary_sj(language_vacancies_superjob)
+        average_rub_salary_by_languages_sj[programming_language] = average_rub_salary_by_language_sj
+    pprint(average_rub_salary_by_languages_hh)
     pprint(average_rub_salary_by_languages_sj)
