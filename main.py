@@ -5,7 +5,6 @@ import os
 import requests
 from pprint import pprint
 
-
 def get_filtered_vacancies_hh(user_agent_name, filtering_options={}):  # TODO: Добавь Try Except
     hh_api_url = "https://api.hh.ru/vacancies"
     vacancies_request_parameters = dict({
@@ -29,8 +28,25 @@ def get_filtered_vacancies_hh(user_agent_name, filtering_options={}):  # TODO: �
         vacancies_page_json = vacancies_page_response.json()
         total_pages_number = vacancies_page_json["pages"]
         vacancies_page_number = vacancies_page_index + 1
-        print("{} from {} downloaded.".format(vacancies_page_number, total_pages_number))
+        print(
+            "hh.ru {}: {} from {} downloaded.".format(
+                vacancies_request_parameters["text"], vacancies_page_number, total_pages_number
+            )
+        )
         yield vacancies_page_json["items"]
+
+
+def get_actual_programming_vacancies_moscow_hh(programming_language, user_agent_name):
+    language_vacancies_hh = get_filtered_vacancies_hh(
+        user_agent_name=user_agent_name,
+        filtering_options={
+            "specialization": "1.221",  # Programming specialization id
+            "area": 1,  # Moscow id
+            "period": 30,  # days
+            "text": programming_language,  # text to search in vacancies
+        },
+    )
+    return language_vacancies_hh
 
 
 def get_filtered_vacancies_superjob(authorization_key, filtering_options={}):
@@ -40,6 +56,7 @@ def get_filtered_vacancies_superjob(authorization_key, filtering_options={}):
         "town": "",
         "catalogues": "",
         "count": 20,
+        "keyword": "",
     }, **filtering_options)
     is_more_pages = True
     for page_index in count():
@@ -57,7 +74,11 @@ def get_filtered_vacancies_superjob(authorization_key, filtering_options={}):
         vacancies_per_page = superjob_request_parameters["count"]
         total_vacancies_quantity = superjob_response_json["total"]
         total_pages_quantity = ceil(total_vacancies_quantity / vacancies_per_page)
-        print("{} from {} pages downloaded".format(page_number, total_pages_quantity))
+        print(
+            "superjob.ru {}: {} from {} pages downloaded".format(
+                superjob_request_parameters["keyword"], page_number, total_pages_quantity
+            )
+        )
         is_more_pages = superjob_response_json["more"]
         yield superjob_response_json["objects"]
 
@@ -126,16 +147,8 @@ if __name__ == "__main__":
     average_rub_salary_by_languages_hh = {}
     average_rub_salary_by_languages_sj = {}
     for programming_language in programming_languages:
-        print("Язык программирования:", programming_language)
-        language_vacancies_hh = get_filtered_vacancies_hh(
-            user_agent_name="Api-test-agent",
-            filtering_options={
-                "specialization": "1.221",     # Programming specialization id
-                "area": 1,                     # Moscow id
-                "period": 30,                  # days
-                "text": programming_language,  # text to search in vacancies
-            },
-        )
+        language_vacancies_hh = get_actual_programming_vacancies_moscow_hh(
+            programming_language, "Api-test-agent")
         average_rub_salary_by_language_hh = predict_average_rub_salary_hh(language_vacancies_hh)
         average_rub_salary_by_languages_hh[programming_language] = average_rub_salary_by_language_hh
         language_vacancies_superjob = get_filtered_vacancies_superjob(
