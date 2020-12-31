@@ -5,40 +5,52 @@ import os
 import requests
 from pprint import pprint
 
-def get_filtered_vacancies_hh(user_agent_name, filtering_options={}):  # TODO: Добавь Try Except
+
+def get_filtered_vacancies_page_hh(user_agent_name, filtering_options={}):
     hh_api_url = "https://api.hh.ru/vacancies"
     vacancies_request_parameters = dict({
         "specialization": "",
         "area": "",
         "period": "",
         "text": "",
+        "page": "",
     }, **filtering_options)
     vacancies_request_header = {"User-Agent": user_agent_name}
+    vacancies_page_response = requests.get(
+        hh_api_url,
+        params=vacancies_request_parameters,
+        headers=vacancies_request_header,
+    )
+    vacancies_page_response.raise_for_status()
+    vacancies_page_json = vacancies_page_response.json()
+
+    return vacancies_page_json
+
+
+def get_filtered_vacancies_generator_hh(user_agent_name, filtering_options={}):  # TODO: Добавь Try Except
     total_pages_number = 0
     for vacancies_page_index in count():
         if total_pages_number and vacancies_page_index >= total_pages_number:
             break
-        vacancies_request_parameters["page"] = vacancies_page_index
-        vacancies_page_response = requests.get(
-            hh_api_url,
-            params=vacancies_request_parameters,
-            headers=vacancies_request_header,
+        filtering_options["page"] = vacancies_page_index
+        vacancies_page_hh = get_filtered_vacancies_page_hh(
+            user_agent_name,
+            filtering_options,
         )
-        vacancies_page_response.raise_for_status()
-        vacancies_page_json = vacancies_page_response.json()
-        total_pages_number = vacancies_page_json["pages"]
-        vacancies_page_number = vacancies_page_index + 1
+        total_pages_number = vacancies_page_hh["pages"]  # TODO вынеси принт в main
+        vacancies_page_number = vacancies_page_hh["page"] + 1
         print(
             "hh.ru {}: {} from {} downloaded.".format(
-                vacancies_request_parameters["text"], vacancies_page_number, total_pages_number
+                filtering_options["text"], vacancies_page_number, total_pages_number
             )
         )
-        yield vacancies_page_json["items"]
+
+        yield vacancies_page_hh["items"]
 
 
 def get_actual_programming_vacancies_moscow_hh(programming_language, user_agent_name):
-    language_vacancies_hh = get_filtered_vacancies_hh(
-        user_agent_name=user_agent_name,
+    language_vacancies_hh = get_filtered_vacancies_generator_hh(
+        user_agent_name,
         filtering_options={
             "specialization": "1.221",  # Programming specialization id
             "area": 1,  # Moscow id
@@ -49,7 +61,7 @@ def get_actual_programming_vacancies_moscow_hh(programming_language, user_agent_
     return language_vacancies_hh
 
 
-def get_filtered_vacancies_superjob(authorization_key, filtering_options={}):
+def get_filtered_vacancies_sj(authorization_key, filtering_options={}):
     superjob_api_url = "https://api.superjob.ru/2.0/vacancies"
     superjob_authorisation_header = {"X-Api-App-ID": authorization_key}
     superjob_request_parameters = dict({
@@ -63,7 +75,7 @@ def get_filtered_vacancies_superjob(authorization_key, filtering_options={}):
         if not is_more_pages:
             break
         superjob_request_parameters["page"] = page_index
-        superjob_response = requests.get(
+        superjob_response = requests.get(  # TODO: Выдели в отдельную функцию или две.
             superjob_api_url,
             params=superjob_request_parameters,
             headers=superjob_authorisation_header,
@@ -81,6 +93,18 @@ def get_filtered_vacancies_superjob(authorization_key, filtering_options={}):
         )
         is_more_pages = superjob_response_json["more"]
         yield superjob_response_json["objects"]
+
+
+def get_actual_programming_vacancies_moscow_sj(programming_language, authorization_key):
+    language_vacancies_superjob = get_filtered_vacancies_sj(
+        authorization_key,
+        filtering_options={
+            "town": 4,  # Moscow id
+            "catalogues": 48,  # Programming category id
+            "keyword": programming_language,
+        },
+    )
+    return language_vacancies_superjob
 
 
 def predict_salary(salary_from, salary_to):
@@ -147,19 +171,19 @@ if __name__ == "__main__":
     average_rub_salary_by_languages_hh = {}
     average_rub_salary_by_languages_sj = {}
     for programming_language in programming_languages:
-        language_vacancies_hh = get_actual_programming_vacancies_moscow_hh(
+        language_vacancies_generator_hh = get_actual_programming_vacancies_moscow_hh(
             programming_language, "Api-test-agent")
-        average_rub_salary_by_language_hh = predict_average_rub_salary_hh(language_vacancies_hh)
-        average_rub_salary_by_languages_hh[programming_language] = average_rub_salary_by_language_hh
-        language_vacancies_superjob = get_filtered_vacancies_superjob(
-            superjob_api_key,
-            filtering_options={
-                "town": 4,                     # Moscow id
-                "catalogues": 48,              # Programming category id
-                "keyword": programming_language,
-            },
+        language_vacancies_generator_superjob = get_actual_programming_vacancies_moscow_sj(
+            programming_language, superjob_api_key
         )
-        average_rub_salary_by_language_sj = predict_average_rub_salary_sj(language_vacancies_superjob)
-        average_rub_salary_by_languages_sj[programming_language] = average_rub_salary_by_language_sj
+        try:
+            average_rub_salary_by_language_hh = predict_average_rub_salary_hh(language_vacancies_generator_hh)
+            average_rub_salary_by_languages_hh[programming_language] = average_rub_salary_by_language_hh
+
+            average_rub_salary_by_language_sj = predict_average_rub_salary_sj(language_vacancies_generator_superjob)
+            average_rub_salary_by_languages_sj[programming_language] = average_rub_salary_by_language_sj
+        except Exception:
+            print("Ойойойойойойо!")
+            exit()
     pprint(average_rub_salary_by_languages_hh)
     pprint(average_rub_salary_by_languages_sj)
