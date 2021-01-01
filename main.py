@@ -67,7 +67,7 @@ def get_monthly_moscow_vacancies_generator_hh(user_agent_name, search_text="", r
     )
 
 
-def get_filtered_vacancies_sj(authorization_key, filtering_options={}):
+def get_filtered_vacancies_page_sj(authorization_key, filtering_options):
     superjob_api_url = "https://api.superjob.ru/2.0/vacancies"
     superjob_authorisation_header = {"X-Api-App-ID": authorization_key}
     superjob_request_parameters = dict({
