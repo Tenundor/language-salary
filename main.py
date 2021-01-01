@@ -70,11 +70,22 @@ def get_monthly_moscow_vacancies_generator_hh(user_agent_name, search_text="", r
 def get_filtered_vacancies_page_sj(authorization_key, filtering_options):
     superjob_api_url = "https://api.superjob.ru/2.0/vacancies"
     superjob_authorisation_header = {"X-Api-App-ID": authorization_key}
-    superjob_request_parameters = dict({
-        "town": "",
-        "catalogues": "",
-        "count": 20,
-        "keyword": "",
+    superjob_page_response = requests.get(
+        superjob_api_url,
+        params=filtering_options,
+        headers=superjob_authorisation_header,
+    )
+    superjob_page_response.raise_for_status()
+    return superjob_page_response.json()
+
+
+def get_filtered_vacancies_generator_sj(authorization_key, filtering_options=None, reporthook=None):
+    if filtering_options is None:
+        filtering_options = {}
+    else:
+        filtering_options = filtering_options.copy()
+    filtering_options = dict({
+        "count": 20  # Default vacancies count per page
     }, **filtering_options)
     is_more_pages = True
     for page_index in count():
