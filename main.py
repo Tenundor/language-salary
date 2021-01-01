@@ -175,8 +175,8 @@ def predict_average_rub_salary_sj(sj_vacancies_generator):
 
 
 programming_languages = [
-        "TypeScript", "Swift", ##"Scala", "Objective-C", "Shell", "JavaScript",
-        # "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
+        "TypeScript", "Swift", "Scala", "Objective-C", "Shell", "JavaScript",
+        "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
     ]
 
 if __name__ == "__main__":
