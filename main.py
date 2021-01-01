@@ -156,7 +156,7 @@ def predict_average_salary(vacancies_predicted_salary):
     }
 
 
-def predict_average_rub_salary_hh(hh_vacancies_generator):  # TODO: избавиться от функций hh и sj
+def predict_average_rub_salary_hh(hh_vacancies_generator):
     vacancies_predicted_rub_salary = []
     for hh_vacancies_page in hh_vacancies_generator:
         vacancies_predicted_rub_salary += [
