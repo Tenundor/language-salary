@@ -10,8 +10,8 @@ def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
     hh_api_url = "https://api.hh.ru/vacancies"
     vacancies_page_response = requests.get(
         hh_api_url,
-        params=vacancies_request_parameters,
-        headers=vacancies_request_header,
+        params=filtering_options,
+        headers={"User-Agent": user_agent_name},
     )
     vacancies_page_response.raise_for_status()
     return vacancies_page_response.json()
