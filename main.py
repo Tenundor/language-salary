@@ -8,14 +8,6 @@ from pprint import pprint
 
 def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
     hh_api_url = "https://api.hh.ru/vacancies"
-    vacancies_request_parameters = dict({
-        "specialization": "",
-        "area": "",
-        "period": "",
-        "text": "",
-        "page": "",
-    }, **filtering_options)
-    vacancies_request_header = {"User-Agent": user_agent_name}
     vacancies_page_response = requests.get(
         hh_api_url,
         params=vacancies_request_parameters,
