@@ -200,9 +200,12 @@ if __name__ == "__main__":
             average_salary_by_languages_rub_hh[programming_language] = average_language_salary_rub_hh
             average_language_salary_rub_sj = predict_average_rub_salary_sj(language_vacancies_generator_superjob)
             average_salary_by_languages_rub_sj[programming_language] = average_language_salary_rub_sj
-        except Exception:
-            print("Ойойойойойойо!")
-            raise
+        except requests.exceptions.ConnectionError:
+            print("Ошибка соединения.")
+            exit()
+        except requests.exceptions.HTTPError as http_error:
+            print(http_error)
+            exit()
     print("\nhh.ru vacancies average salary:\n")
     pprint(average_salary_by_languages_rub_hh)
     print("\nsuperjob.ru vacancies average salary:\n")
