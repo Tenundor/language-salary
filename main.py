@@ -35,7 +35,7 @@ def get_filtered_vacancies_generator_hh(user_agent_name, filtering_options=None,
         filtering_options = filtering_options.copy()
     total_pages = 0
     for vacancies_page_index in count():
-        if total_pages_number and vacancies_page_index >= total_pages_number:
+        if total_pages and vacancies_page_index >= total_pages:
             break
         filtering_options["page"] = vacancies_page_index
         vacancies_page_hh = get_filtered_vacancies_page_hh(
@@ -126,14 +126,14 @@ def predict_salary(salary_from, salary_to):
         return int((salary_from + salary_to) / 2)
 
 
-def predict_rub_salary_hh(vacancy_hh):
+def predict_rub_salary_for_headhunter(vacancy_hh):
     vacancy_salary = vacancy_hh["salary"]
     if not vacancy_salary or vacancy_salary["currency"] != "RUR":
         return None
     return predict_salary(vacancy_salary["from"], vacancy_salary["to"])
 
 
-def predict_rub_salary_sj(vacancy_sj):
+def predict_rub_salary_for_superjob(vacancy_sj):
     if vacancy_sj["currency"] != "rub":
         return None
     return predict_salary(vacancy_sj["payment_from"], vacancy_sj["payment_to"])
@@ -155,7 +155,7 @@ def predict_average_rub_salary_hh(hh_vacancies_generator):  # TODO: избави
     vacancies_predicted_rub_salary = []
     for hh_vacancies_page in hh_vacancies_generator:
         vacancies_predicted_rub_salary += [
-            predict_rub_salary_hh(vacancy) for vacancy in hh_vacancies_page
+            predict_rub_salary_for_headhunter(vacancy) for vacancy in hh_vacancies_page
         ]
     return predict_average_salary(vacancies_predicted_rub_salary)
 
@@ -164,7 +164,7 @@ def predict_average_rub_salary_sj(sj_vacancies_generator):
     vacancies_predicted_rub_salary = []
     for sj_vacancies_page in sj_vacancies_generator:
         vacancies_predicted_rub_salary += [
-            predict_rub_salary_sj(vacancy) for vacancy in sj_vacancies_page
+            predict_rub_salary_for_superjob(vacancy) for vacancy in sj_vacancies_page
         ]
     return predict_average_salary(vacancies_predicted_rub_salary)
 
@@ -190,13 +190,14 @@ if __name__ == "__main__":
             reporthook=print_vacancies_download_progress,
         )
         try:
-            average_rub_salary_by_language_hh = predict_average_rub_salary_hh(language_vacancies_generator_hh)
-            average_rub_salary_by_languages_hh[programming_language] = average_rub_salary_by_language_hh
-
-            average_rub_salary_by_language_sj = predict_average_rub_salary_sj(language_vacancies_generator_superjob)
-            average_rub_salary_by_languages_sj[programming_language] = average_rub_salary_by_language_sj
+            average_language_salary_rub_hh = predict_average_rub_salary_hh(language_vacancies_generator_hh)
+            average_salary_by_languages_rub_hh[programming_language] = average_language_salary_rub_hh
+            average_language_salary_rub_sj = predict_average_rub_salary_sj(language_vacancies_generator_superjob)
+            average_salary_by_languages_rub_sj[programming_language] = average_language_salary_rub_sj
         except Exception:
             print("Ойойойойойойо!")
-            exit()
-    pprint(average_rub_salary_by_languages_hh)
-    pprint(average_rub_salary_by_languages_sj)
+            raise
+    print("\nhh.ru vacancies average salary:\n")
+    pprint(average_salary_by_languages_rub_hh)
+    print("\nsuperjob.ru vacancies average salary:\n")
+    pprint(average_salary_by_languages_rub_sj)
