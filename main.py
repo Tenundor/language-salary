@@ -80,21 +80,17 @@ def get_filtered_vacancies_page_sj(authorization_key, filtering_options):
     for page_index in count():
         if not is_more_pages:
             break
-        superjob_request_parameters["page"] = page_index
-        superjob_response = requests.get(  # TODO: Выдели в отдельную функцию или две.
-            superjob_api_url,
-            params=superjob_request_parameters,
-            headers=superjob_authorisation_header,
-        )
-        superjob_response.raise_for_status()
-        superjob_response_json = superjob_response.json()
-        page_number = page_index + 1
-        vacancies_per_page = superjob_request_parameters["count"]
-        total_vacancies_quantity = superjob_response_json["total"]
-        total_pages_quantity = ceil(total_vacancies_quantity / vacancies_per_page)
-        print(
-            "superjob.ru {}: {} from {} pages downloaded".format(
-                superjob_request_parameters["keyword"], page_number, total_pages_quantity
+        filtering_options["page"] = page_index
+        vacancies_page_sj = get_filtered_vacancies_page_sj(authorization_key, filtering_options)
+        if reporthook:
+            vacancies_per_page = filtering_options["count"]
+            total_vacancies_quantity = vacancies_page_sj["total"]
+            total_pages_quantity = ceil(total_vacancies_quantity / vacancies_per_page)
+            reporthook(
+                job_search_service="SuperJob.ru",
+                vacancy_keyword=filtering_options["keyword"],
+                page_number=page_index + 1,
+                total_pages=total_pages_quantity,
             )
         )
         is_more_pages = superjob_response_json["more"]
