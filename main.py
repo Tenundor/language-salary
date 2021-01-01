@@ -14,9 +14,8 @@ def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
         headers=vacancies_request_header,
     )
     vacancies_page_response.raise_for_status()
-    vacancies_page_json = vacancies_page_response.json()
+    return vacancies_page_response.json()
 
-    return vacancies_page_json
 
 
 def get_filtered_vacancies_generator_hh(user_agent_name, filtering_options={}):  # TODO: Добавь Try Except
