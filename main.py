@@ -17,9 +17,23 @@ def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
     return vacancies_page_response.json()
 
 
+def print_vacancies_download_progress(
+        job_search_service,
+        page_number,
+        total_pages,
+        vacancy_keyword="all",
+):
+    print(
+        f"{job_search_service} {vacancy_keyword} vacancies: {page_number} from {total_pages} downloaded."
+    )
 
-def get_filtered_vacancies_generator_hh(user_agent_name, filtering_options={}):  # TODO: Добавь Try Except
-    total_pages_number = 0
+
+def get_filtered_vacancies_generator_hh(user_agent_name, filtering_options=None, reporthook=None):
+    if filtering_options is None:
+        filtering_options = {}
+    else:
+        filtering_options = filtering_options.copy()
+    total_pages = 0
     for vacancies_page_index in count():
         if total_pages_number and vacancies_page_index >= total_pages_number:
             break
@@ -28,19 +42,20 @@ def get_filtered_vacancies_generator_hh(user_agent_name, filtering_options={}): 
             user_agent_name,
             filtering_options,
         )
-        total_pages_number = vacancies_page_hh["pages"]  # TODO вынеси принт в main
-        vacancies_page_number = vacancies_page_hh["page"] + 1
-        print(
-            "hh.ru {}: {} from {} downloaded.".format(
-                filtering_options["text"], vacancies_page_number, total_pages_number
+        total_pages = vacancies_page_hh["pages"]
+        if reporthook:
+            reporthook(
+                job_search_service="hh.ru",
+                vacancy_keyword=filtering_options["text"],
+                page_number=vacancies_page_hh["page"] + 1,
+                total_pages=total_pages,
             )
-        )
 
         yield vacancies_page_hh["items"]
 
 
-def get_actual_programming_vacancies_moscow_hh(programming_language, user_agent_name):
-    language_vacancies_hh = get_filtered_vacancies_generator_hh(
+def get_monthly_moscow_vacancies_generator_hh(user_agent_name, search_text="", reporthook=None):
+    return get_filtered_vacancies_generator_hh(
         user_agent_name,
         filtering_options={
             "specialization": "1.221",  # Programming specialization id
@@ -48,6 +63,7 @@ def get_actual_programming_vacancies_moscow_hh(programming_language, user_agent_
             "period": 30,  # days
             "text": programming_language,  # text to search in vacancies
         },
+        reporthook=reporthook,
     )
     return language_vacancies_hh
 
@@ -86,14 +102,15 @@ def get_filtered_vacancies_sj(authorization_key, filtering_options={}):
         yield superjob_response_json["objects"]
 
 
-def get_actual_programming_vacancies_moscow_sj(programming_language, authorization_key):
-    language_vacancies_superjob = get_filtered_vacancies_sj(
+def get_monthly_moscow_vacancies_generator_sj(search_text, authorization_key, reporthook=None):
+    language_vacancies_superjob = get_filtered_vacancies_generator_sj(
         authorization_key,
         filtering_options={
             "town": 4,  # Moscow id
             "catalogues": 48,  # Programming category id
             "keyword": programming_language,
         },
+        reporthook=reporthook,
     )
     return language_vacancies_superjob
 
@@ -162,10 +179,15 @@ if __name__ == "__main__":
     average_rub_salary_by_languages_hh = {}
     average_rub_salary_by_languages_sj = {}
     for programming_language in programming_languages:
-        language_vacancies_generator_hh = get_actual_programming_vacancies_moscow_hh(
-            programming_language, "Api-test-agent")
-        language_vacancies_generator_superjob = get_actual_programming_vacancies_moscow_sj(
-            programming_language, superjob_api_key
+        language_vacancies_generator_hh = get_monthly_moscow_vacancies_generator_hh(
+            user_agent_name="Api-test-agent",
+            search_text=programming_language,
+            reporthook=print_vacancies_download_progress,
+        )
+        language_vacancies_generator_superjob = get_monthly_moscow_vacancies_generator_sj(
+            search_text=programming_language,
+            authorization_key=superjob_api_key,
+            reporthook=print_vacancies_download_progress,
         )
         try:
             average_rub_salary_by_language_hh = predict_average_rub_salary_hh(language_vacancies_generator_hh)
