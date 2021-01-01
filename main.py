@@ -174,15 +174,16 @@ def predict_average_rub_salary_sj(sj_vacancies_generator):
     return predict_average_salary(vacancies_predicted_rub_salary)
 
 
-if __name__ == "__main__":
-    load_dotenv()
-    superjob_api_key = os.getenv("SUPERJOB_API_KEY")
-    programming_languages = [
+programming_languages = [
         "TypeScript", "Swift", ##"Scala", "Objective-C", "Shell", "JavaScript",
         # "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
     ]
-    average_rub_salary_by_languages_hh = {}
-    average_rub_salary_by_languages_sj = {}
+
+if __name__ == "__main__":
+    load_dotenv()
+    superjob_api_key = os.getenv("SUPERJOB_API_KEY")
+    average_salary_by_languages_rub_hh = {}
+    average_salary_by_languages_rub_sj = {}
     for programming_language in programming_languages:
         language_vacancies_generator_hh = get_monthly_moscow_vacancies_generator_hh(
             user_agent_name="Api-test-agent",
