@@ -58,10 +58,10 @@ def get_monthly_moscow_vacancies_generator_hh(user_agent_name, search_text="", r
     return get_filtered_vacancies_generator_hh(
         user_agent_name,
         filtering_options={
-            "specialization": "1.221",  # Programming specialization id
-            "area": 1,  # Moscow id
-            "period": 30,  # days
-            "text": programming_language,  # text to search in vacancies
+            "specialization": "1.221",      # Programming specialization id
+            "area": 1,                      # Moscow id
+            "period": 30,                   # days
+            "text": search_text,            # text to search in vacancies
         },
         reporthook=reporthook,
     )
