@@ -65,7 +65,6 @@ def get_monthly_moscow_vacancies_generator_hh(user_agent_name, search_text="", r
         },
         reporthook=reporthook,
     )
-    return language_vacancies_hh
 
 
 def get_filtered_vacancies_sj(authorization_key, filtering_options={}):
