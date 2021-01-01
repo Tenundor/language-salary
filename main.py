@@ -103,18 +103,17 @@ def get_filtered_vacancies_generator_sj(authorization_key, filtering_options=Non
                 page_number=page_index + 1,
                 total_pages=total_pages_quantity,
             )
-        )
-        is_more_pages = superjob_response_json["more"]
-        yield superjob_response_json["objects"]
+        is_more_pages = vacancies_page_sj["more"]
+        yield vacancies_page_sj["objects"]
 
 
 def get_monthly_moscow_vacancies_generator_sj(search_text, authorization_key, reporthook=None):
     language_vacancies_superjob = get_filtered_vacancies_generator_sj(
         authorization_key,
         filtering_options={
-            "town": 4,  # Moscow id
-            "catalogues": 48,  # Programming category id
-            "keyword": programming_language,
+            "town": 4,               # Moscow id
+            "catalogues": 48,        # Programming specialization id
+            "keyword": search_text,  # text to search in vacancies
         },
         reporthook=reporthook,
     )
