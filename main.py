@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from terminaltables import AsciiTable
 from itertools import count
 from math import ceil
 import os
@@ -193,8 +194,13 @@ def prepare_average_salary_for_table_print(vacancies_average_salary):
     return vacancies_average_salary_list
 
 
-def print_vacancies_average_salary_table(vacancies_average_salary, table_header=""):
-    pass
+def print_vacancies_average_salary_table(vacancies_average_salary, table_title=""):
+    average_salary_list = prepare_average_salary_for_table_print(vacancies_average_salary)
+    average_salary_table_instanse = AsciiTable(
+        average_salary_list,
+        title=table_title,
+    )
+    print(average_salary_table_instanse.table)
 
 
 programming_languages = [
