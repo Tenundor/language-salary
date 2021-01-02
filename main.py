@@ -174,6 +174,29 @@ def predict_average_rub_salary_sj(sj_vacancies_generator):
     return predict_average_salary(vacancies_predicted_rub_salary)
 
 
+def prepare_average_salary_for_table_print(vacancies_average_salary):
+    column_headers = [
+        "Язык программирования",
+        "Вакансий найдено",
+        "Вакансий обработано",
+        "Средняя зарплата",
+    ]
+    vacancies_average_salary_list = [column_headers]
+    for programming_language, average_salary in vacancies_average_salary.items():
+        table_row = [
+            programming_language,
+            average_salary["vacancies_found"],
+            average_salary["vacancies_processed"],
+            average_salary["average_salary"],
+        ]
+        vacancies_average_salary_list.append(table_row)
+    return vacancies_average_salary_list
+
+
+def print_vacancies_average_salary_table(vacancies_average_salary, table_header=""):
+    pass
+
+
 programming_languages = [
         "TypeScript", "Swift", "Scala", "Objective-C", "Shell", "JavaScript",
         "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
