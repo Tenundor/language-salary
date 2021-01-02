@@ -4,7 +4,6 @@ from itertools import count
 from math import ceil
 import os
 import requests
-from pprint import pprint
 
 
 def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
