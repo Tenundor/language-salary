@@ -24,7 +24,7 @@ def print_vacancies_download_progress(
         vacancy_keyword="all",
 ):
     print(
-        f"{job_search_service} {vacancy_keyword} vacancies: {page_number} from {total_pages} downloaded."
+        f"{job_search_service} {vacancy_keyword} vacancies: {page_number} from {total_pages} pages downloaded."
     )
 
 
