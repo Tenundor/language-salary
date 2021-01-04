@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from terminaltables import AsciiTable
 from itertools import count
-from math import ceil
 import os
 import requests
 
@@ -17,7 +16,10 @@ def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
     return vacancies_page_response.json()
 
 
-def get_filtered_vacancies_generator_hh(user_agent_name, filtering_options=None):
+def get_filtered_vacancies_generator_hh(
+        user_agent_name,
+        filtering_options=None
+):
     if filtering_options is None:
         filtering_options = {}
     else:
@@ -60,7 +62,10 @@ def get_filtered_vacancies_page_sj(authorization_key, filtering_options):
     return superjob_page_response.json()
 
 
-def get_filtered_vacancies_generator_sj(authorization_key, filtering_options=None):
+def get_filtered_vacancies_generator_sj(
+        authorization_key,
+        filtering_options=None
+):
     if filtering_options is None:
         filtering_options = {}
     else:
@@ -73,7 +78,10 @@ def get_filtered_vacancies_generator_sj(authorization_key, filtering_options=Non
         if not is_more_pages:
             break
         filtering_options["page"] = page_index
-        vacancies_page_sj = get_filtered_vacancies_page_sj(authorization_key, filtering_options)
+        vacancies_page_sj = get_filtered_vacancies_page_sj(
+            authorization_key,
+            filtering_options,
+        )
         is_more_pages = vacancies_page_sj["more"]
         yield vacancies_page_sj["objects"]
 
@@ -116,10 +124,14 @@ def predict_rub_salary_for_superjob(vacancy_sj):
 
 def predict_average_salary(vacancies_predicted_salary):
     vacancies_quantity = len(vacancies_predicted_salary)
-    processed_vacancies_salary = list(filter(lambda salary: type(salary) is int, vacancies_predicted_salary))
+    processed_vacancies_salary = list(
+        filter(lambda salary: type(salary) is int, vacancies_predicted_salary)
+    )
     processed_vacancies_quantity = len(processed_vacancies_salary)
     if processed_vacancies_quantity:
-        average_salary = int(sum(processed_vacancies_salary) / processed_vacancies_quantity)
+        average_salary = int(
+            sum(processed_vacancies_salary) / processed_vacancies_quantity
+        )
     else:
         average_salary = None
     return {
@@ -166,8 +178,13 @@ def prepare_average_salary_for_table_print(vacancies_average_salary):
     return vacancies_average_salary_list
 
 
-def print_vacancies_average_salary_table(vacancies_average_salary, table_title=""):
-    average_salary_list = prepare_average_salary_for_table_print(vacancies_average_salary)
+def print_vacancies_average_salary_table(
+        vacancies_average_salary,
+        table_title="",
+):
+    average_salary_list = prepare_average_salary_for_table_print(
+        vacancies_average_salary
+    )
     average_salary_table_instance = AsciiTable(
         average_salary_list,
         title=table_title,
@@ -195,10 +212,18 @@ if __name__ == "__main__":
             authorization_key=superjob_api_key,
         )
         try:
-            average_language_salary_rub_hh = predict_average_rub_salary_hh(language_vacancies_generator_hh)
-            average_salary_by_languages_rub_hh[programming_language] = average_language_salary_rub_hh
-            average_language_salary_rub_sj = predict_average_rub_salary_sj(language_vacancies_generator_superjob)
-            average_salary_by_languages_rub_sj[programming_language] = average_language_salary_rub_sj
+            average_language_salary_rub_hh = predict_average_rub_salary_hh(
+                language_vacancies_generator_hh
+            )
+            average_salary_by_languages_rub_hh[
+                programming_language
+            ] = average_language_salary_rub_hh
+            average_language_salary_rub_sj = predict_average_rub_salary_sj(
+                language_vacancies_generator_superjob
+            )
+            average_salary_by_languages_rub_sj[
+                programming_language
+            ] = average_language_salary_rub_sj
         except requests.exceptions.ConnectionError:
             print("Ошибка соединения.")
             exit()
@@ -206,6 +231,10 @@ if __name__ == "__main__":
             print(http_error)
             exit()
     print("\n")
-    print_vacancies_average_salary_table(average_salary_by_languages_rub_hh, "Head Hunter")
+    print_vacancies_average_salary_table(
+        average_salary_by_languages_rub_hh, "Head Hunter"
+    )
     print("\n")
-    print_vacancies_average_salary_table(average_salary_by_languages_rub_sj, "Super Job")
+    print_vacancies_average_salary_table(
+        average_salary_by_languages_rub_sj, "Super Job"
+    )
