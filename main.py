@@ -3,6 +3,7 @@ from terminaltables import AsciiTable
 from itertools import count
 import os
 import requests
+from utils import predict_salary
 
 
 def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
@@ -96,17 +97,6 @@ def get_monthly_moscow_vacancies_generator_sj(search_text, authorization_key):
         },
     )
     return language_vacancies_superjob
-
-
-def predict_salary(salary_from, salary_to):
-    if not salary_from and not salary_to:
-        return None
-    if not salary_from:
-        return int(salary_to * 0.8)
-    if not salary_to:
-        return int(salary_from * 1.2)
-    else:
-        return int((salary_from + salary_to) / 2)
 
 
 def predict_rub_salary_for_headhunter(vacancy_hh):
