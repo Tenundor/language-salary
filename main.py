@@ -42,8 +42,8 @@ def print_vacancies_average_salary_table(
 
 
 programming_languages = [
-        "TypeScript", "Swift"#, "Scala", "Objective-C", "Shell", "JavaScript",
-        #"Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
+        "TypeScript", "Swift", "Scala", "Objective-C", "Shell", "JavaScript",
+        "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
     ]
 
 if __name__ == "__main__":
