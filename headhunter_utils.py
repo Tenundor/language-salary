@@ -61,6 +61,3 @@ def predict_average_rub_salary_hh(vacancies):
             predict_rub_salary_for_headhunter(vacancy) for vacancy in page
         ])
     return predict_average_salary(predicted_salary)
-
-
-

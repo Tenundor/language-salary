@@ -55,4 +55,3 @@ def predict_average_rub_salary_sj(vacancies):
             predict_rub_salary_for_superjob(vacancy) for vacancy in page
         ])
     return predict_average_salary(predicted_salary)
-
