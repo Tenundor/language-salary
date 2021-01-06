@@ -1,6 +1,8 @@
-from utils import predict_salary, predict_average_salary
 from itertools import count
+
 import requests
+
+from utils import predict_salary, predict_average_salary
 
 
 def get_filtered_vacancies_hh(

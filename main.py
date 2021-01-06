@@ -1,11 +1,13 @@
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
 import requests
+from terminaltables import AsciiTable
+
 from headhunter_utils import get_monthly_moscow_vacancies_hh
 from headhunter_utils import predict_average_rub_salary_hh
 from superjob_utils import get_monthly_moscow_vacancies_sj
 from superjob_utils import predict_average_rub_salary_sj
-from terminaltables import AsciiTable
 
 
 def prepare_average_salary_for_table_print(vacancies_average_salary):
