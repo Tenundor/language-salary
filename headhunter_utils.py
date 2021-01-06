@@ -3,48 +3,47 @@ from itertools import count
 import requests
 
 
-def get_filtered_vacancies_page_hh(user_agent_name, filtering_options):
-    hh_api_url = "https://api.hh.ru/vacancies"
-    vacancies_page_response = requests.get(
-        hh_api_url,
-        params=filtering_options,
-        headers={"User-Agent": user_agent_name},
-    )
-    vacancies_page_response.raise_for_status()
-    return vacancies_page_response.json()
-
-
 def get_filtered_vacancies_generator_hh(
         user_agent_name,
-        filtering_options=None
+        specialization="",
+        area="",
+        period="",
+        search_text="",
 ):
-    if filtering_options is None:
-        filtering_options = {}
-    else:
-        filtering_options = filtering_options.copy()
+    hh_api_url = "https://api.hh.ru/vacancies"
     total_pages = 0
     for vacancies_page_index in count():
         if total_pages and vacancies_page_index >= total_pages:
             break
-        filtering_options["page"] = vacancies_page_index
-        vacancies_page_hh = get_filtered_vacancies_page_hh(
-            user_agent_name,
-            filtering_options,
+        vacancies_page_response = requests.get(
+            hh_api_url,
+            params={
+                "specialization": specialization,
+                "area": area,
+                "period": period,
+                "text": search_text,
+                "page": vacancies_page_index,
+            },
+            headers={"User-Agent": user_agent_name},
         )
+        vacancies_page_response.raise_for_status()
+        vacancies_page_hh = vacancies_page_response.json()
         total_pages = vacancies_page_hh["pages"]
 
         yield vacancies_page_hh["items"]
 
 
 def get_monthly_moscow_vacancies_generator_hh(user_agent_name, search_text=""):
+    moscow_id = "1"
+    programming_specialization_id = "1.221"
+    search_period_days = "30"
+
     return get_filtered_vacancies_generator_hh(
         user_agent_name,
-        filtering_options={
-            "specialization": "1.221",      # Programming specialization id
-            "area": 1,                      # Moscow id
-            "period": 30,                   # days
-            "text": search_text,            # text to search in vacancies
-        },
+        specialization=programming_specialization_id,
+        area=moscow_id,
+        period=search_period_days,
+        search_text=search_text,
     )
 
 
@@ -55,13 +54,12 @@ def predict_rub_salary_for_headhunter(vacancy_hh):
     return predict_salary(vacancy_salary["from"], vacancy_salary["to"])
 
 
-
 def predict_average_rub_salary_hh(hh_vacancies_generator):
     vacancies_predicted_rub_salary = []
     for hh_vacancies_page in hh_vacancies_generator:
-        vacancies_predicted_rub_salary += [
+        vacancies_predicted_rub_salary.extend([
             predict_rub_salary_for_headhunter(vacancy) for vacancy in hh_vacancies_page
-        ]
+        ])
     return predict_average_salary(vacancies_predicted_rub_salary)
 
 
