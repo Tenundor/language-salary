@@ -11,13 +11,13 @@ def predict_salary(salary_from, salary_to):
 
 def predict_average_salary(vacancies_predicted_salary):
     vacancies_quantity = len(vacancies_predicted_salary)
-    processed_vacancies_salary = list(
+    processed_salary = list(
         filter(lambda salary: type(salary) is int, vacancies_predicted_salary)
     )
-    processed_vacancies_quantity = len(processed_vacancies_salary)
+    processed_vacancies_quantity = len(processed_salary)
     if processed_vacancies_quantity:
         average_salary = int(
-            sum(processed_vacancies_salary) / processed_vacancies_quantity
+            sum(processed_salary) / processed_vacancies_quantity
         )
     else:
         average_salary = None
