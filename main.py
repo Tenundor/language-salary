@@ -29,7 +29,7 @@ def prepare_average_salary_for_table_print(vacancies_average_salary):
     return average_salaries
 
 
-def print_vacancies_average_salary_table(
+def assemble_vacancies_average_salary_table(
         vacancies_average_salary,
         table_title=""):
     average_salaries = prepare_average_salary_for_table_print(
@@ -39,7 +39,7 @@ def print_vacancies_average_salary_table(
         average_salaries,
         title=table_title,
     )
-    print(table_instance.table)
+    return table_instance.table
 
 
 programming_languages = [
@@ -81,10 +81,12 @@ if __name__ == "__main__":
             print(http_error)
             exit()
     print("\n")
-    print_vacancies_average_salary_table(
-        average_salary_by_languages_rub_hh, "Head Hunter"
-    )
+    print(
+        assemble_vacancies_average_salary_table(
+            average_salary_by_languages_rub_hh, "Head Hunter"
+        ))
     print("\n")
-    print_vacancies_average_salary_table(
-        average_salary_by_languages_rub_sj, "Super Job"
-    )
+    print(
+        assemble_vacancies_average_salary_table(
+            average_salary_by_languages_rub_sj, "Super Job"
+        ))
