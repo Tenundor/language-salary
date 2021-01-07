@@ -55,9 +55,9 @@ def predict_rub_salary_for_headhunter(vacancy):
     return predict_salary(vacancy_salary["from"], vacancy_salary["to"])
 
 
-def predict_average_rub_salary_hh(vacancies):
+def predict_average_rub_salary_hh(vacancy_pages):
     predicted_salary = []
-    for page in vacancies:
+    for page in vacancy_pages:
         predicted_salary.extend([
             predict_rub_salary_for_headhunter(vacancy) for vacancy in page
         ])

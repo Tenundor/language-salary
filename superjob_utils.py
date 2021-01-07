@@ -49,9 +49,9 @@ def predict_rub_salary_for_superjob(vacancy):
     return predict_salary(vacancy["payment_from"], vacancy["payment_to"])
 
 
-def predict_average_rub_salary_sj(vacancies):
+def predict_average_rub_salary_sj(vacancy_pages):
     predicted_salary = []
-    for page in vacancies:
+    for page in vacancy_pages:
         predicted_salary.extend([
             predict_rub_salary_for_superjob(vacancy) for vacancy in page
         ])

@@ -17,7 +17,7 @@ def prepare_average_salary_for_table_print(vacancies_average_salary):
         "Вакансий обработано",
         "Средняя зарплата",
     ]
-    average_salary_list = [column_headers]
+    average_salaries = [column_headers]
     for language, average_salary in vacancies_average_salary.items():
         table_row = [
             language,
@@ -25,18 +25,18 @@ def prepare_average_salary_for_table_print(vacancies_average_salary):
             average_salary["vacancies_processed"],
             average_salary["average_salary"],
         ]
-        average_salary_list.append(table_row)
-    return average_salary_list
+        average_salaries.append(table_row)
+    return average_salaries
 
 
 def print_vacancies_average_salary_table(
         vacancies_average_salary,
         table_title=""):
-    average_salary_list = prepare_average_salary_for_table_print(
+    average_salaries = prepare_average_salary_for_table_print(
         vacancies_average_salary
     )
     table_instance = AsciiTable(
-        average_salary_list,
+        average_salaries,
         title=table_title,
     )
     print(table_instance.table)
