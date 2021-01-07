@@ -42,12 +42,11 @@ def assemble_vacancies_average_salary_table(
     return table_instance.table
 
 
-programming_languages = [
+def main():
+    programming_languages = [
         "TypeScript", "Swift", "Scala", "Objective-C", "Shell", "JavaScript",
         "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
     ]
-
-if __name__ == "__main__":
     load_dotenv()
     superjob_api_key = os.getenv("SUPERJOB_API_KEY")
     average_salary_by_languages_rub_hh = {}
@@ -90,3 +89,8 @@ if __name__ == "__main__":
         assemble_vacancies_average_salary_table(
             average_salary_by_languages_rub_sj, "Super Job"
         ))
+
+
+if __name__ == "__main__":
+    main()
+
