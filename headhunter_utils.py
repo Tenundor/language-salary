@@ -10,8 +10,7 @@ def get_filtered_vacancies_hh(
         specialization="",
         area="",
         period="",
-        search_text="",
-):
+        search_text=""):
     api_url = "https://api.hh.ru/vacancies"
     total_pages = 0
     for page_index in count():

@@ -31,8 +31,7 @@ def prepare_average_salary_for_table_print(vacancies_average_salary):
 
 def print_vacancies_average_salary_table(
         vacancies_average_salary,
-        table_title="",
-):
+        table_title=""):
     average_salary_list = prepare_average_salary_for_table_print(
         vacancies_average_salary
     )

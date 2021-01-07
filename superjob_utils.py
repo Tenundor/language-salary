@@ -9,8 +9,7 @@ def get_filtered_vacancies_sj(
         authorization_key,
         town="",
         catalogues="",
-        keyword="",
-):
+        keyword=""):
     api_url = "https://api.superjob.ru/2.0/vacancies"
     authorisation_header = {"X-Api-App-ID": authorization_key}
     is_more_pages = True
