@@ -67,7 +67,7 @@ def main():
     average_salary_table_sj = assemble_vacancies_average_salary_table(
         average_salary_by_languages_sj, "Super Job"
     )
-    print(average_salary_table_hh, average_salary_table_sj, sep="\n")
+    print(average_salary_table_hh, average_salary_table_sj, sep="\n\n")
 
 
 if __name__ == "__main__":
