@@ -4,10 +4,8 @@ from dotenv import load_dotenv
 import requests
 from terminaltables import AsciiTable
 
-from headhunter_utils import get_monthly_moscow_vacancies_hh
-from headhunter_utils import predict_average_rub_salary_hh
-from superjob_utils import get_monthly_moscow_vacancies_sj
-from superjob_utils import predict_average_rub_salary_sj
+from headhunter_utils import collect_average_salary_moscow_hh
+from superjob_utils import collect_average_salary_moscow_sj
 
 
 def prepare_average_salary_for_table_print(vacancies_average_salary):
@@ -42,35 +40,9 @@ def assemble_vacancies_average_salary_table(
     return table_instance.table
 
 
-def collect_average_salary_moscow_hh(programming_languages):
-    average_salary_by_languages = {}
-    for programming_language in programming_languages:
-        language_vacancies = get_monthly_moscow_vacancies_hh(
-            user_agent_name="Api-test-agent",
-            search_text=programming_language,
-        )
-        average_salary = predict_average_rub_salary_hh(language_vacancies)
-        average_salary_by_languages[programming_language] = average_salary
-
-    return average_salary_by_languages
-
-
-def collect_average_salary_moscow_sj(programming_languages):
-    load_dotenv()
-    api_key = os.getenv("SUPERJOB_API_KEY")
-    average_salary_by_languages = {}
-    for programming_language in programming_languages:
-        language_vacancies = get_monthly_moscow_vacancies_sj(
-            search_text=programming_language,
-            authorization_key=api_key,
-        )
-        average_salary = predict_average_rub_salary_sj(language_vacancies)
-        average_salary_by_languages[programming_language] = average_salary
-
-    return average_salary_by_languages
-
-
 def main():
+    load_dotenv()
+    superjob_api_key = os.getenv("SUPERJOB_API_KEY")
     programming_languages = [
         "TypeScript", "Swift", "Scala", "Objective-C", "Shell", "JavaScript",
         "Go", "C", "C#", "C++", "PHP", "Ruby", "Python", "Java",
@@ -80,7 +52,8 @@ def main():
             programming_languages
         )
         average_salary_by_languages_sj = collect_average_salary_moscow_sj(
-            programming_languages
+            programming_languages,
+            api_key=superjob_api_key,
         )
     except requests.exceptions.ConnectionError:
         print("Ошибка соединения.")

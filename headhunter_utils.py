@@ -61,3 +61,16 @@ def predict_average_rub_salary_hh(vacancy_pages):
             predict_rub_salary_for_headhunter(vacancy) for vacancy in page
         ])
     return predict_average_salary(predicted_salary)
+
+
+def collect_average_salary_moscow_hh(programming_languages):
+    average_salary_by_languages = {}
+    for programming_language in programming_languages:
+        language_vacancies = get_monthly_moscow_vacancies_hh(
+            user_agent_name="Api-test-agent",
+            search_text=programming_language,
+        )
+        average_salary = predict_average_rub_salary_hh(language_vacancies)
+        average_salary_by_languages[programming_language] = average_salary
+
+    return average_salary_by_languages
