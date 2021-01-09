@@ -44,9 +44,8 @@ def get_monthly_moscow_vacancies_sj(search_text, authorization_key):
 
 
 def predict_rub_salary_for_superjob(vacancy):
-    if vacancy["currency"] != "rub":
-        return None
-    return predict_salary(vacancy["payment_from"], vacancy["payment_to"])
+    if vacancy["currency"] == "rub":
+        return predict_salary(vacancy["payment_from"], vacancy["payment_to"])
 
 
 def predict_average_rub_salary_sj(vacancy_pages):

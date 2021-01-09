@@ -50,9 +50,8 @@ def get_monthly_moscow_vacancies_hh(user_agent_name, search_text=""):
 
 def predict_rub_salary_for_headhunter(vacancy):
     vacancy_salary = vacancy["salary"]
-    if not vacancy_salary or vacancy_salary["currency"] != "RUR":
-        return None
-    return predict_salary(vacancy_salary["from"], vacancy_salary["to"])
+    if vacancy_salary and vacancy_salary["currency"] == "RUR":
+        return predict_salary(vacancy_salary["from"], vacancy_salary["to"])
 
 
 def predict_average_rub_salary_hh(vacancy_pages):
